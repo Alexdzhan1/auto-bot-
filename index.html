@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Подбор авто</title>
+  <style>
+    :root {
+      --bg: #091117;
+      --panel: rgba(15, 23, 31, 0.88);
+      --panel-strong: #121c24;
+      --text: #edf2f7;
+      --muted: #93a4b5;
+      --accent: #ff7a3d;
+      --accent-dark: #ffb07c;
+      --line: rgba(255, 255, 255, 0.08);
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+      --radius-lg: 28px;
+      --radius-md: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255, 122, 61, 0.22), transparent 32%),
+        radial-gradient(circle at right, rgba(56, 189, 248, 0.14), transparent 26%),
+        linear-gradient(160deg, #071017 0%, #0d1720 45%, #081018 100%);
+      min-height: 100vh;
+    }
+
+    .shell {
+      width: min(1120px, calc(100% - 32px));
+      margin: 32px auto;
+      padding: 32px;
+      border-radius: 36px;
+      background: rgba(8, 13, 18, 0.52);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 24px;
+      align-items: stretch;
+      margin-bottom: 24px;
+    }
+
+    .hero-card,
+    .filters,
+    .catalog,
+    .tips {
+      background: var(--panel);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+      color: #ffc39d;
+      background: rgba(255, 122, 61, 0.14);
+    }
+
+    h1 {
+      font-size: clamp(36px, 6vw, 62px);
+      line-height: 0.95;
+      margin: 18px 0 14px;
+      letter-spacing: -0.04em;
+    }
+
+    .hero-card p {
+      margin: 0 0 24px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.6;
+      max-width: 52ch;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .stat {
+      padding: 18px;
+      background: #16222c;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--line);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 28px;
+      margin-bottom: 6px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .filters h2,
+    .catalog h2,
+    .tips h2 {
+      margin: 0 0 18px;
+      font-size: 24px;
+    }
+
+    .filters-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    select,
+    input[type="range"] {
+      width: 100%;
+    }
+
+    select {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: #16222c;
+      padding: 14px 16px;
+      border-radius: 14px;
+      color: var(--text);
+      font-size: 15px;
+    }
+
+    .budget-row {
+      padding: 16px;
+      background: #16222c;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+    }
+
+    .budget-value {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .cta {
+      border: none;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--accent), #df7d4f);
+      color: #fff;
+      padding: 15px 18px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 18px 32px rgba(255, 122, 61, 0.2);
+    }
+
+    .cta:hover {
+      transform: translateY(-2px);
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 24px;
+    }
+
+    .catalog-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .catalog-head p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .car-card {
+      padding: 20px;
+      border-radius: 24px;
+      background: #16222c;
+      border: 1px solid var(--line);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .car-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 22px 40px rgba(0, 0, 0, 0.24);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+      margin-bottom: 12px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.16);
+      color: #87dbff;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .car-card h3 {
+      margin: 0 0 6px;
+      font-size: 24px;
+    }
+
+    .price {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--accent-dark);
+      white-space: nowrap;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0 18px;
+    }
+
+    .meta span,
+    .tips li {
+      color: var(--muted);
+    }
+
+    .meta span {
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: #1a2731;
+      font-size: 13px;
+    }
+
+    .car-card button {
+      width: 100%;
+      border: 1px solid rgba(255, 122, 61, 0.24);
+      background: transparent;
+      color: var(--accent-dark);
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .car-card p {
+      color: var(--muted);
+    }
+
+    .tips ul {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .result-note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 920px) {
+      .hero,
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .shell {
+        width: min(100% - 20px, 1120px);
+        margin: 10px auto;
+        padding: 18px;
+        border-radius: 24px;
+      }
+
+      .hero-card,
+      .filters,
+      .catalog,
+      .tips {
+        padding: 20px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        line-height: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <div class="hero-card">
+        <div class="eyebrow">Подбор авто за 2 минуты</div>
+        <h1>Найдите машину под свой стиль жизни</h1>
+        <p>
+          Выберите бюджет, тип кузова и приоритет, а страница покажет подходящие варианты.
+          Это демо-макет, который можно использовать как основу для автосалона или лендинга.
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <strong>24</strong>
+            <span>модели в базе</span>
+          </div>
+          <div class="stat">
+            <strong>5</strong>
+            <span>критериев подбора</span>
+          </div>
+          <div class="stat">
+            <strong>1</strong>
+            <span>страница для старта</span>
+          </div>
+        </div>
+      </div>
+
+      <aside class="filters">
+        <h2>Ваши параметры</h2>
+        <div class="filters-grid">
+          <div>
+            <label for="bodyType">Тип кузова</label>
+            <select id="bodyType">
+              <option value="all">Любой</option>
+              <option value="sedan">Седан</option>
+              <option value="crossover">Кроссовер</option>
+              <option value="suv">Внедорожник</option>
+              <option value="hatchback">Хэтчбек</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="fuelType">Топливо</label>
+            <select id="fuelType">
+              <option value="all">Любое</option>
+              <option value="petrol">Бензин</option>
+              <option value="diesel">Дизель</option>
+              <option value="hybrid">Гибрид</option>
+              <option value="electric">Электро</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="priority">Главный приоритет</label>
+            <select id="priority">
+              <option value="all">Не важно</option>
+              <option value="family">Для семьи</option>
+              <option value="city">Для города</option>
+              <option value="comfort">Комфорт</option>
+              <option value="economy">Экономичность</option>
+            </select>
+          </div>
+
+          <div class="budget-row">
+            <div class="budget-value">
+              <span>Бюджет</span>
+              <strong id="budgetValue">35 000 $</strong>
+            </div>
+            <input id="budget" type="range" min="10000" max="80000" step="1000" value="35000">
+          </div>
+
+          <button class="cta" id="pickButton">Подобрать авто</button>
+          <div class="result-note" id="resultNote">Показаны все модели для примера.</div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="main-grid">
+      <div class="catalog">
+        <div class="catalog-head">
+          <div>
+            <h2>Рекомендации</h2>
+            <p id="resultCount">Найдено 6 вариантов</p>
+          </div>
+          <div class="eyebrow">Сравнение по параметрам</div>
+        </div>
+        <div class="cards" id="cards"></div>
+      </div>
+
+      <aside class="tips">
+        <h2>Как выбирать</h2>
+        <ul>
+          <li>Для города лучше подходят компактные модели с малым расходом и удобной парковкой.</li>
+          <li>Для семьи важны объем багажника, задний ряд и высокий рейтинг безопасности.</li>
+          <li>Если нужен запас на будущее, выбирайте авто с чуть большим бюджетом на обслуживание.</li>
+          <li>Гибриды и электрокары особенно интересны для ежедневных коротких поездок.</li>
+        </ul>
+      </aside>
+    </section>
+  </div>
+
+  <script>
+    const cars = [
+      {
+        name: "Toyota Camry",
+        price: 32000,
+        body: "sedan",
+        fuel: "hybrid",
+        priority: "comfort",
+        badge: "Надежный выбор",
+        meta: ["2023", "218 л.с.", "Гибрид", "Комфорт-класс"]
+      },
+      {
+        name: "Skoda Octavia",
+        price: 24000,
+        body: "hatchback",
+        fuel: "petrol",
+        priority: "city",
+        badge: "Практичный вариант",
+        meta: ["2022", "150 л.с.", "Бензин", "Большой багажник"]
+      },
+      {
+        name: "Kia Sportage",
+        price: 34500,
+        body: "crossover",
+        fuel: "petrol",
+        priority: "family",
+        badge: "Для семьи",
+        meta: ["2024", "180 л.с.", "Кроссовер", "5 мест"]
+      },
+      {
+        name: "Volkswagen Tiguan",
+        price: 39000,
+        body: "suv",
+        fuel: "diesel",
+        priority: "comfort",
+        badge: "Универсал дня",
+        meta: ["2023", "200 л.с.", "Дизель", "Полный привод"]
+      },
+      {
+        name: "Hyundai Kona Electric",
+        price: 36000,
+        body: "crossover",
+        fuel: "electric",
+        priority: "economy",
+        badge: "Электро",
+        meta: ["2024", "484 км", "Электро", "Городской ритм"]
+      },
+      {
+        name: "Mazda 3",
+        price: 27000,
+        body: "sedan",
+        fuel: "petrol",
+        priority: "city",
+        badge: "Стиль и драйв",
+        meta: ["2023", "165 л.с.", "Бензин", "Компактный седан"]
+      }
+    ];
+
+    const cards = document.getElementById("cards");
+    const bodyType = document.getElementById("bodyType");
+    const fuelType = document.getElementById("fuelType");
+    const priority = document.getElementById("priority");
+    const budget = document.getElementById("budget");
+    const budgetValue = document.getElementById("budgetValue");
+    const resultCount = document.getElementById("resultCount");
+    const resultNote = document.getElementById("resultNote");
+    const pickButton = document.getElementById("pickButton");
+
+    function formatPrice(value) {
+      return new Intl.NumberFormat("ru-RU").format(value) + " $";
+    }
+
+    function renderCars(list) {
+      cards.innerHTML = "";
+
+      if (!list.length) {
+        cards.innerHTML = "<div class='car-card'><h3>Ничего не найдено</h3><p>Попробуйте увеличить бюджет или изменить фильтры.</p></div>";
+        resultCount.textContent = "Подходящих вариантов не найдено";
+        return;
+      }
+
+      list.forEach((car) => {
+        const article = document.createElement("article");
+        article.className = "car-card";
+        article.innerHTML = `
+          <div class="card-top">
+            <div>
+              <span class="badge">${car.badge}</span>
+              <h3>${car.name}</h3>
+            </div>
+            <div class="price">${formatPrice(car.price)}</div>
+          </div>
+          <div class="meta">
+            ${car.meta.map((item) => `<span>${item}</span>`).join("")}
+          </div>
+          <button type="button">Хочу консультацию</button>
+        `;
+        cards.appendChild(article);
+      });
+
+      resultCount.textContent = `Найдено ${list.length} вариантов`;
+    }
+
+    function applyFilters() {
+      const filtered = cars.filter((car) => {
+        const byBody = bodyType.value === "all" || car.body === bodyType.value;
+        const byFuel = fuelType.value === "all" || car.fuel === fuelType.value;
+        const byPriority = priority.value === "all" || car.priority === priority.value;
+        const byBudget = car.price <= Number(budget.value);
+        return byBody && byFuel && byPriority && byBudget;
+      });
+
+      renderCars(filtered);
+      resultNote.textContent = filtered.length
+        ? "Результаты обновлены по выбранным параметрам."
+        : "Совпадений нет. Для демо можно просто поднять бюджет.";
+    }
+
+    budget.addEventListener("input", () => {
+      budgetValue.textContent = formatPrice(Number(budget.value));
+    });
+
+    pickButton.addEventListener("click", applyFilters);
+
+    renderCars(cars);
+  </script>
+</body>
+</html>
